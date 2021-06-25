@@ -49,7 +49,7 @@ export class CategoryService {
       catchError(this.handleError),
       map(() => null)
     );
-  };
+  }
 
   private jsonDataToCategory(jsonData: any): Category {
     return jsonData as Category;
