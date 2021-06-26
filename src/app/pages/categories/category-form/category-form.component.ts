@@ -77,7 +77,10 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
   }
 
   private actionsForError(error: any): void {
-    toastr.console.error('Ocorreu um erro na tentativa de processar sua solicitação, por favor tente novamente mais tarde');
+    toastr.console.error(
+      'Ocorreu um erro na tentativa de processar sua solicitação, ' +
+      'por favor tente novamente mais tarde'
+    );
 
     this.submittingForm = false;
 
@@ -85,7 +88,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
       this.serverErrorMessages = JSON.parse(error._body).errors;
     } else {
       this.serverErrorMessages =
-        ['Falha na comunicação com o servidor, por favor tenta novamente mais tarde'];
+        ['Falha na comunicação com o servidor, por favor tente novamente mais tarde'];
     }
   }
 
