@@ -51,7 +51,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
     this.categoryService.create(category)
       .subscribe(
-        (category) => this.actionsForSuccess(category),
+        (data) => this.actionsForSuccess(data),
         (error) => this.actionsForError(error)
       );
   }
@@ -61,7 +61,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
     this.categoryService.update(category)
       .subscribe(
-        (category) => this.actionsForSuccess(category),
+        (data) => this.actionsForSuccess(data),
         (error) => this.actionsForError(error)
       );
   }
@@ -76,7 +76,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
       .catch((error) => alert('Ocorreu um erro no redirect da página ' + error));
   }
 
-  private actionsForError(error): void {
+  private actionsForError(error: any): void {
     toastr.console.error('Ocorreu um erro na tentativa de processar sua solicitação, por favor tente novamente mais tarde');
 
     this.submittingForm = false;
@@ -84,7 +84,8 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
     if (error.status === 422) {
       this.serverErrorMessages = JSON.parse(error._body).errors;
     } else {
-      this.serverErrorMessages = ['Falha na comunicação com o servidor, por favor tenta novamente mais tarde']
+      this.serverErrorMessages =
+        ['Falha na comunicação com o servidor, por favor tenta novamente mais tarde'];
     }
   }
 
