@@ -2,6 +2,7 @@ import { AfterContentChecked, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import toastr from 'toastr';
 
 import { Category } from './../shared/category.model';
 import { CategoryService } from './../shared/category.service';
@@ -35,6 +36,56 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
   ngAfterContentChecked() {
     this.setPageTitle();
+  }
+
+  public submitForm(): void {
+    this.submittingForm = true;
+
+    this.currentAction === 'new' ?
+      this.createCategory() :
+      this.updateCategory();
+  }
+
+  private createCategory(): void {
+    const category: Category = Object.assign(new Category(), this.categoryForm.value);
+
+    this.categoryService.create(category)
+      .subscribe(
+        (category) => this.actionsForSuccess(category),
+        (error) => this.actionsForError(error)
+      );
+  }
+
+  private updateCategory(): void {
+    const category: Category = Object.assign(new Category(), this.categoryForm.value);
+
+    this.categoryService.update(category)
+      .subscribe(
+        (category) => this.actionsForSuccess(category),
+        (error) => this.actionsForError(error)
+      );
+  }
+
+  private actionsForSuccess(category: Category): void {
+    this.currentAction === 'new' ?
+      toastr.success('Nova categoria criada com sucesso') :
+      toastr.success('Categoria alterada com sucesso');
+
+    this.router.navigateByUrl('/categories', { skipLocationChange: true })
+      .then(() => this.router.navigate(['categories', category.id, 'edit']))
+      .catch((error) => alert('Ocorreu um erro no redirect da página ' + error));
+  }
+
+  private actionsForError(error): void {
+    toastr.console.error('Ocorreu um erro na tentativa de processar sua solicitação, por favor tente novamente mais tarde');
+
+    this.submittingForm = false;
+
+    if (error.status === 422) {
+      this.serverErrorMessages = JSON.parse(error._body).errors;
+    } else {
+      this.serverErrorMessages = ['Falha na comunicação com o servidor, por favor tenta novamente mais tarde']
+    }
   }
 
   private setPageTitle(): void {
